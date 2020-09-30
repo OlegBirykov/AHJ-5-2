@@ -1,2 +1,4 @@
-// eslint-disable-next-line no-console
-console.log('it works!');
+import PriceListWidget from './widgets/PriceListWidget';
+
+const priceList = new PriceListWidget(document.querySelector('.container'));
+priceList.bindToDOM();
