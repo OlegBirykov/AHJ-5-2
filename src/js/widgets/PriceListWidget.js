@@ -1,5 +1,6 @@
 import EditForm from './EditForm';
 import DeleteForm from './DeleteForm';
+import splitPrice from '../tools/utils';
 
 export default class PriceListWidget {
   constructor(parentEl) {
@@ -10,7 +11,6 @@ export default class PriceListWidget {
 
   static get markup() {
     return `
-    <div class="price-list-form" data-widget="price-list-form">
       <div class="header">
         <p>Товары</p>
         <p class="icon" data-id="${this.ctrlId.add}">+</p>
@@ -18,7 +18,7 @@ export default class PriceListWidget {
       <table>
         <thead>
           <tr>
-            <td class="title">Название</td>
+            <td class="name">Название</td>
             <td class="price">Стоимость</td>
             <td class="actions">Действия</td>
           </tr>
@@ -26,12 +26,12 @@ export default class PriceListWidget {
         <tbody data-id="${this.ctrlId.list}">
         </tbody>
       </table>
-    </div>
     `;
   }
 
   static get ctrlId() {
     return {
+      form: 'price-list-form',
       list: 'product-list',
       add: 'command-create',
       edit: 'command-edit',
@@ -56,15 +56,19 @@ export default class PriceListWidget {
   }
 
   bindToDOM() {
-    this.parentEl.innerHTML = this.constructor.markup;
+    this.form = document.createElement('div');
+    this.form.className = 'price-list-form';
+    this.form.dataset.widget = this.constructor.ctrlId.form;
+    this.form.innerHTML = this.constructor.markup;
+    this.parentEl.appendChild(this.form);
+
+    this.addButton = this.form.querySelector(this.constructor.addSelector);
+    this.listContainer = this.form.querySelector(this.constructor.listSelector);
 
     this.editForm = new EditForm(this);
     this.editForm.bindToDOM();
     this.deleteForm = new DeleteForm(this);
     this.deleteForm.bindToDOM();
-
-    this.addButton = this.parentEl.querySelector(this.constructor.addSelector);
-    this.listContainer = this.parentEl.querySelector(this.constructor.listSelector);
 
     this.addButton.addEventListener('click', this.onAddButtonClick.bind(this));
     this.listContainer.addEventListener('click', this.onListContainerClick.bind(this));
@@ -79,19 +83,26 @@ export default class PriceListWidget {
     this.editForm.updateProduct();
   }
 
-  onListContainerClick() {
+  onListContainerClick(event) {
     if (!this.isActive) {
       return;
     }
-    console.log('Нажали на таблицу');
+
+    const { index } = event.target.closest('tr').dataset;
+
+    if (event.target.dataset.id === this.constructor.ctrlId.edit) {
+      this.editForm.updateProduct(index);
+    } else if (event.target.dataset.id === this.constructor.ctrlId.delete) {
+      this.deleteForm.deleteProduct(index);
+    }
   }
 
   redraw() {
-    this.listContainer.innerHTML = this.productList.reduce((str, { title, price }, i) => `
+    this.listContainer.innerHTML = this.productList.reduce((str, { name, price }, i) => `
       ${str}
       <tr data-index="${i}">
-        <td class="title">${title}</td>
-        <td class="price">${price}</td>
+        <td class="name">${name}</td>
+        <td class="price">${splitPrice(price)}</td>
         <td class="actions">
           <span class="icon" data-id="${this.constructor.ctrlId.edit}">&#x270E;</span>
           <span class="icon delete" data-id="${this.constructor.ctrlId.delete}">&times;</span>

@@ -30,4 +30,22 @@ export default class Tooltip {
 
     this.text = this.tooltip.querySelector(this.constructor.textSelector);
   }
+
+  onResize() {
+    const { top, left } = this.targetEl.getBoundingClientRect();
+    this.tooltip.style.left = `${window.scrollX + left + this.targetEl.offsetWidth / 2 - this.tooltip.offsetWidth / 2}px`;
+    this.tooltip.style.top = `${window.scrollY + top - this.tooltip.offsetHeight - 8}px`;
+  }
+
+  show(message) {
+    this.text.innerText = message;
+    this.tooltip.classList.add('active');
+    this.onResize();
+    window.addEventListener('resize', this.onResize.bind(this));
+  }
+
+  hide() {
+    this.tooltip.classList.remove('active');
+    window.removeEventListener('resize', this.onResize.bind(this));
+  }
 }

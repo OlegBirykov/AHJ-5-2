@@ -47,6 +47,7 @@ export default class DeleteForm {
 
     this.form.addEventListener('submit', this.onSubmit.bind(this));
     this.form.addEventListener('reset', this.onReset.bind(this));
+    window.addEventListener('resize', this.onResize.bind(this));
   }
 
   onSubmit(event) {
@@ -55,8 +56,7 @@ export default class DeleteForm {
     this.parentWidget.productList.splice(this.index, 1);
     this.parentWidget.redraw();
 
-    this.form.classList.remove('active');
-    this.parentWidget.isActive = true;
+    this.onReset();
   }
 
   onReset() {
@@ -64,10 +64,18 @@ export default class DeleteForm {
     this.parentWidget.isActive = true;
   }
 
+  onResize() {
+    this.form.style.left = `${window.scrollX + window.innerWidth / 2 - this.form.offsetWidth / 2}px`;
+    this.form.style.top = `${window.scrollY + window.innerHeight / 2 - this.form.offsetHeight / 2}px`;
+  }
+
   deleteProduct(index) {
     this.parentWidget.isActive = false;
-    this.index = index;
+    this.index = +index;
+
+    this.text.innerText = `Вы действительно хотите удалить этот чудесный товар "${this.parentWidget.productList[index].name}"?`;
 
     this.form.classList.add('active');
+    this.onResize();
   }
 }
