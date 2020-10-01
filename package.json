@@ -6,8 +6,9 @@
     "start": "webpack-dev-server --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "lint": "eslint .",
-    "test": "jest",
-    "coverage": "jest --coverage"
+    "test": "jest --testPathPattern=./src/",
+    "coverage": "jest --testPathPattern=./src/ --coverage",
+    "e2e": "jest --testPathPattern=./e2e/"
   },
   "author": "coursar",
   "license": "MIT",
@@ -32,11 +33,10 @@
     "html-loader": "^1.1.0",
     "jest": "^26.4.2",
     "live-server": "^1.2.1",
+    "puppeteer": "^5.3.1",
     "sass-loader": "^10.0.2",
     "style-loader": "^1.2.1",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "copy-webpack-plugin": "^6.1.0",
@@ -46,6 +46,8 @@
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "push-dir": "^0.4.1",
     "terser-webpack-plugin": "^4.1.0",
+    "webpack": "^4.44.2",
+    "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^5.1.4"
   },
   "repository": "git+https://github.com/OlegBirykov/AHJ-5-2.git",
